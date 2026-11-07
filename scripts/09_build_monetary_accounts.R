@@ -86,7 +86,7 @@ checks <- bind_rows(
 save_table(value_table, "carbon_value_country_year")
 
 write_carbon_results_workbook(
-  national_for_workbook, regional, region_checks, type_weights,
+  regional,
   years = years_report,
   base_year = base_year,
   path = file.path(results_dir, "carbon_sequestration_results.xlsx")

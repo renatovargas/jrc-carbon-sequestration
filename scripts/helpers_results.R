@@ -118,9 +118,7 @@ write_results_sheet <- function(wb, sheet, title, note, data, metrics) {
 #' types is the flow without offset of the region. The actual flow is shared by the forest share.
 #' Missed flow is the regional flow without offset minus the regional actual flow.
 #'
-#' @param national Table by `geo` and `year` with `flow`, one column per land type named
 #'   `rem_<land_type>` (thousand tonnes of CO2) and `epoch`.
-#' @param type_weights Table from `scripts/06_prepare_nuts_weights.R`.
 #' @return Table with `level`, `nuts_id`, `name`, `geo`, `year`, `flow`, `flow_no_offset`, `missed_flow`.
 regional_carbon_flows <- function(national, type_weights) {
   rem_cols <- grep("^rem_", names(national), value = TRUE)
@@ -144,9 +142,7 @@ regional_carbon_flows <- function(national, type_weights) {
 
 #' Physical and monetary values of every region of the reporting years.
 #'
-#' @param national Table by `geo` and `year` with `flow`, `flow_no_offset`, `missed_flow`,
 #'   `rem_<land_type>` columns, `price` (euro per tonne of CO2, current prices) and `deflator`.
-#' @param type_weights Table from `scripts/06_prepare_nuts_weights.R`.
 #' @param years Reporting years.
 #' @param epochs Named integer vector that links each reporting year to a CLC epoch.
 #' @return Table by region and year with the columns that the workbook shows.
@@ -199,32 +195,25 @@ results_checks <- function(regional, tables = result_tables, tolerance = 1e-6) {
 #' Build the results workbook of the carbon sequestration service.
 #'
 #' Sheets exist for the actual flow, the flow without offset and the missed flow in physical terms,
-#' and for the actual flow and the missed flow in monetary terms, each for NUTS0, NUTS2 and NUTS3. A
-#' national balance sheet and a checks sheet are added.
+#' and for the actual flow and the missed flow in monetary terms, each for NUTS0, NUTS2 and NUTS3.
 #'
-#' @param national Table by `geo` and `year` with `removals`, `emissions` and `balance`.
 #' @param regional Table from `regional_results()`.
-#' @param checks Table from `results_checks()`.
-#' @param type_weights Table from `scripts/06_prepare_nuts_weights.R`.
 #' @param years Reporting years.
 #' @param base_year Base year of the constant prices.
 #' @param path Output file.
 #' @return The path, invisibly.
-write_carbon_results_workbook <- function(national, regional, checks, type_weights, years, base_year, path) {
-  national <- national |> filter(year %in% years)
-
+write_carbon_results_workbook <- function(regional, years, base_year, path) {
   readme <- c(
     "Carbon sequestration ecosystem service accounts, global climate regulation",
     paste0("Reporting years ", paste(years, collapse = ", "), ". Constant prices use ", base_year,
            " as the base year (Eurostat HICP, EU-27)."),
-    "Sheets are named Flow, NoOffset or Missed, then phys or mon, then the NUTS level (NUTS0, NUTS2, NUTS3). The Balance_NUTS0 sheet reports national removals, emissions and the signed balance.",
+    "Sheets are named Flow, NoOffset or Missed, then phys or mon, then the NUTS level (NUTS0, NUTS2, NUTS3).",
     "Flow without offset is the total CO2 removals of forest land, cropland, grassland, wetlands, settlements and other land.",
     "Actual flow is the EU total removals minus the EU total emissions of the same land categories, attributed to countries in proportion to their removals of forest land.",
     "Missed flow is the flow without offset minus the actual flow, which is the part of the removals that compensates the emissions of land use.",
     "National values come from the greenhouse gas inventories in Eurostat dataset env_air_gge (CO2, thousand tonnes). Carbon is CO2 times 12/44.",
     "NUTS2 and NUTS3 values share the removals of each land type in proportion to the area of the land type in each region, and the actual flow in proportion to the forest weight of each region, so regions add up to the country.",
     "Monetary values are the CO2 values times the social cost of carbon in euro per tonne, in million euro.",
-    "The Checks sheet compares the NUTS2 and NUTS3 totals with the NUTS0 total for every table, metric and year.",
     "The 100 m maps of the flow without offset and of the actual flow in physical and monetary terms are distributed separately."
   )
 
@@ -248,25 +237,6 @@ write_carbon_results_workbook <- function(national, regional, checks, type_weigh
       )
     }
   }
-
-  country_names <- type_weights |> filter(level == "NUTS0") |> distinct(nuts_id, name, geo)
-  balance <- country_names |> inner_join(national, by = "geo")
-  wb <- write_results_sheet(
-    wb, sheet = "Balance_NUTS0",
-    title = "Removals, emissions and signed balance of land use in physical terms (thousand tonnes of CO2)",
-    note = paste0("National values. Reporting years ", paste(years, collapse = ", "),
-                  ". The balance is removals minus emissions."),
-    data = balance,
-    metrics = c(removals = "Removals", emissions = "Emissions", balance = "Balance")
-  )
-
-  wb <- wb_add_worksheet(wb, "Checks")
-  wb <- wb_add_data(wb, "Checks", x = checks)
-  wb <- wb_add_font(wb, "Checks", dims = wb_dims(rows = 1, cols = seq_along(checks)), bold = TRUE)
-  wb <- wb_add_numfmt(wb, "Checks", dims = wb_dims(rows = 2:(nrow(checks) + 1L), cols = 5:7),
-                      numfmt = "#,##0.000")
-  wb <- wb_set_col_widths(wb, "Checks", cols = seq_along(checks), widths = c(14, 34, 8, 10, 16, 16, 16, 8))
-  wb <- wb_freeze_pane(wb, "Checks", first_active_row = 2L)
 
   wb_save(wb, path)
   invisible(path)
