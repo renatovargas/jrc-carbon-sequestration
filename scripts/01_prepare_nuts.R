@@ -1,17 +1,15 @@
 # Prepare the country boundaries of the accounts.
 #
-# Why    : the maps and tables need the 27 member states, and the full boundary file is too large for the repository.
-# Input  : refs/INCA_plugin/src/inca/data/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg
+# Why    : the maps and tables need the 27 member states, and the source file also holds lower levels.
+# Input  : data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg
 #          (Eurostat GISCO NUTS 2024, scale 1:1 million, EPSG:3035, as distributed with the INCA plugin)
 # Outputs: data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0.gpkg  (country level only)
-#          data/inputs/gis/README_NUTS.txt                   (copyright notice to reproduce)
-# Run    : source("scripts/01_prepare_nuts.R", encoding = "UTF-8"), from the project root. Needs the file in refs/.
+# Run    : source("scripts/01_prepare_nuts.R", encoding = "UTF-8"), from the project root.
 
 library(sf)
 library(dplyr)
 
-source_gpkg <- "refs/INCA_plugin/src/inca/data/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg"
-source_readme <- "refs/INCA_plugin/src/inca/data/README_NUTS.txt"
+source_gpkg <- "data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg"
 out_dir <- "data/inputs/gis"
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -39,4 +37,3 @@ st_write(
   delete_dsn = TRUE,
   quiet = TRUE
 )
-file.copy(source_readme, file.path(out_dir, "README_NUTS.txt"), overwrite = TRUE)

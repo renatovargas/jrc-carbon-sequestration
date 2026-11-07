@@ -42,7 +42,7 @@ read_nuts_regions <- function() {
     filter(eu27) |>
     pull(geo)
   sf::st_read(
-    "refs/INCA_plugin/src/inca/data/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg",
+    "data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg",
     layer = "NUTS_RG_01M_2024_3035.gpkg", quiet = TRUE
   ) |>
     filter(LEVL_CODE %in% c(0, 2, 3), substr(NUTS_ID, 1, 2) %in% eu27) |>

@@ -32,7 +32,7 @@ rules in `AGENTS.md` still apply. This file only adds what those rules do not co
 │   └── helpers_report.R      reads the small tables and formats them, for the report only
 ├── data/
 │   ├── inputs/
-│   │   ├── gis/              country boundaries
+│   │   ├── gis/              NUTS boundaries, as distributed and for the countries
 │   │   ├── eurostat/         CO2 inventory and price index
 │   │   ├── prices/           carbon price
 │   │   ├── corine/           forest share at 1 km, as whole percentages, and land type tables by region

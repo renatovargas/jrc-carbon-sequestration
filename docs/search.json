@@ -23,7 +23,7 @@
     "href": "documentation/methods/carbon-sequestration/index.html#overview",
     "title": "Carbon Sequestration Ecosystem Service Accounts",
     "section": "2.1 Overview",
-    "text": "2.1 Overview\nNational greenhouse gas inventories report CO2 by country, and they do not report it by place. The accounts therefore work in two stages. They first build the national and regional values, which is a statistical problem, and they then place the national values on a map, which is a spatial problem. Monetary values follow from the physical ones through a price per tonne.\nThe analysis covers the EU27, with 239 NUTS2 regions and 1160 NUTS3 regions under the NUTS 2024 boundaries (Eurostat GISCO, 2024), and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see 01_prepare_nuts.R in Annex I).",
+    "text": "2.1 Overview\nNational greenhouse gas inventories report CO2 by country, and they do not report it by place. The accounts therefore work in two stages. They first build the national and regional values, which is a statistical problem, and they then place the national values on a map, which is a spatial problem. Monetary values follow from the physical ones through a price per tonne.\nThe analysis covers the EU27, with 239 NUTS2 regions and 1160 NUTS3 regions under the NUTS 2024 boundaries (Eurostat GISCO, 2024), and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see 01_prepare_nuts.R in Annex I). The boundaries carry the notice © EuroGeographics for the administrative boundaries.",
     "crumbs": [
       "Documents",
       "Methods",
@@ -203,7 +203,7 @@
     "href": "documentation/methods/carbon-sequestration/index.html#script-01",
     "title": "Carbon Sequestration Ecosystem Service Accounts",
     "section": "01_prepare_nuts.R",
-    "text": "01_prepare_nuts.R\nView on GitHub\nThis script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million (Eurostat GISCO, 2024), in the copy distributed with the INCA plugin, and keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file, NUTS_RG_01M_2024_3035_LEVL0.gpkg, which the later scripts use to identify the countries and to draw the maps, and the copyright notice of the boundaries is copied next to it.",
+    "text": "01_prepare_nuts.R\nView on GitHub\nThis script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million (Eurostat GISCO, 2024), in the copy distributed with the INCA plugin, and keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file, NUTS_RG_01M_2024_3035_LEVL0.gpkg, which the later scripts use to identify the countries and to draw the maps. The repository holds the source file with its copyright notice.",
     "crumbs": [
       "Documents",
       "Methods",

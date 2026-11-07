@@ -138,7 +138,7 @@ a map, which is a spatial problem. Monetary values follow from the physical ones
 
 The analysis covers the EU27, with `r territory$nuts2` NUTS2 regions and `r territory$nuts3` NUTS3 regions under the NUTS 2024
 boundaries [@gisco2024nuts], and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see
-[01_prepare_nuts.R in Annex I](#script-01)).
+[01_prepare_nuts.R in Annex I](#script-01)). The boundaries carry the notice © EuroGeographics for the administrative boundaries.
 
 ## Removals and emissions
 
@@ -511,8 +511,8 @@ large source files that are kept outside the repository. Scripts 08 to 10 run fr
 
 This script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million [@gisco2024nuts], in the copy distributed with the INCA plugin, and
 keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file,
-`NUTS_RG_01M_2024_3035_LEVL0.gpkg`, which the later scripts use to identify the countries and to draw the maps, and the copyright notice of the
-boundaries is copied next to it.
+`NUTS_RG_01M_2024_3035_LEVL0.gpkg`, which the later scripts use to identify the countries and to draw the maps. The repository holds the source file with its
+copyright notice.
 
 ## 02_download_eurostat.R {#script-02 .unnumbered .unlisted}
 

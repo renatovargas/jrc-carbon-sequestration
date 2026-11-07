@@ -5,7 +5,7 @@
 #          CORINE Land Cover accounting layers, version 21, 100 m, EPSG:3035, for 2000, 2006, 2012, 2018 and 2024
 #          (European Environment Agency, doi:10.2909/a65428d3-bd66-4b47-bcf9-6bfd6fa5df0c for 2024).
 #          The raster values are the CLC codes (111 to 523).
-#          refs/INCA_plugin/src/inca/data/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg (NUTS 2024 boundaries)
+#          data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0123_INCA.gpkg (NUTS 2024 boundaries)
 # Outputs: data/inputs/corine/CLC<year>_forest_pct_1km.tif
 #            Percentage (whole numbers, 0 to 100) of each 1 km cell covered by forest (CLC 311, 312, 313 and 324).
 #            Each cell holds 100 cells of 100 m, so whole percentages are exact. Read with read_forest_share().

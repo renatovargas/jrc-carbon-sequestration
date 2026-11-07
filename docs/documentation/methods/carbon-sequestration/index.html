@@ -417,7 +417,7 @@ Table&nbsp;2: Key terms of the report.
 <section id="overview" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">2.1</span> Overview</h2>
 <p>National greenhouse gas inventories report CO2 by country, and they do not report it by place. The accounts therefore work in two stages. They first build the national and regional values, which is a statistical problem, and they then place the national values on a map, which is a spatial problem. Monetary values follow from the physical ones through a price per tonne.</p>
-<p>The analysis covers the EU27, with 239 NUTS2 regions and 1160 NUTS3 regions under the NUTS 2024 boundaries <span class="citation" data-cites="gisco2024nuts">(<a href="#ref-gisco2024nuts" role="doc-biblioref">Eurostat GISCO, 2024</a>)</span>, and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see <a href="#script-01">01_prepare_nuts.R in Annex I</a>).</p>
+<p>The analysis covers the EU27, with 239 NUTS2 regions and 1160 NUTS3 regions under the NUTS 2024 boundaries <span class="citation" data-cites="gisco2024nuts">(<a href="#ref-gisco2024nuts" role="doc-biblioref">Eurostat GISCO, 2024</a>)</span>, and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see <a href="#script-01">01_prepare_nuts.R in Annex I</a>). The boundaries carry the notice © EuroGeographics for the administrative boundaries.</p>
 </section>
 <section id="removals-and-emissions" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="removals-and-emissions"><span class="header-section-number">2.2</span> Removals and emissions</h2>
@@ -786,7 +786,7 @@ Zurbarán Nucci, M., Toro Herrera, J. F., Vallecillo, S., La Notte, A., Zulian, 
 <section id="script-01" class="level2 unnumbered unlisted">
 <h2 class="unnumbered unlisted anchored" data-anchor-id="script-01">01_prepare_nuts.R</h2>
 <p><a href="https://github.com/renatovargas/jrc-carbon-sequestration/blob/main/scripts/01_prepare_nuts.R">View on GitHub</a></p>
-<p>This script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million <span class="citation" data-cites="gisco2024nuts">(<a href="#ref-gisco2024nuts" role="doc-biblioref">Eurostat GISCO, 2024</a>)</span>, in the copy distributed with the INCA plugin, and keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file, <code>NUTS_RG_01M_2024_3035_LEVL0.gpkg</code>, which the later scripts use to identify the countries and to draw the maps, and the copyright notice of the boundaries is copied next to it.</p>
+<p>This script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million <span class="citation" data-cites="gisco2024nuts">(<a href="#ref-gisco2024nuts" role="doc-biblioref">Eurostat GISCO, 2024</a>)</span>, in the copy distributed with the INCA plugin, and keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file, <code>NUTS_RG_01M_2024_3035_LEVL0.gpkg</code>, which the later scripts use to identify the countries and to draw the maps. The repository holds the source file with its copyright notice.</p>
 </section>
 <section id="script-02" class="level2 unnumbered unlisted">
 <h2 class="unnumbered unlisted anchored" data-anchor-id="script-02">02_download_eurostat.R</h2>
