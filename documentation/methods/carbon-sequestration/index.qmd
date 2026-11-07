@@ -1,6 +1,13 @@
 ---
 title: "Carbon Sequestration Ecosystem Service Accounts"
-subtitle: "European Union, 2000 to 2024: methods and results"
+subtitle: "European Union, 2000 to 2024 series update: processing methods and results"
+author:
+  - name: Renato Vargas
+    affiliations:
+      - name: Consultant for JRC
+  - name: Alessandra La Notte
+    affiliations:
+      - name: Senior Environmental Economist at European Dynamics
 format:
   html:
     toc: true
@@ -10,6 +17,10 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
+    # The default PDF title block leaves out affiliations, so the block is set here.
+    include-in-header:
+      text: |
+        \AtBeginDocument{\author{Renato Vargas\\ {\small Consultant for JRC} \and Alessandra La Notte\\ {\small Senior Environmental Economist at European Dynamics}}}
 bibliography: carbon-sequestration.bib
 csl: ../../../assets/apa-6th-edition.csl
 execute:
