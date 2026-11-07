@@ -9,6 +9,8 @@
 # Outputs: refs/maps_1km/carbon_flow_gdmp_1km_<year>.tif             (thousand tonnes of CO2 per cell)
 #          refs/maps_1km/carbon_value_constant_gdmp_1km_<year>.tif   (million euro, 2010 prices, per cell)
 #          refs/maps_1km/carbon_flow_no_offset_gdmp_1km_<year>.tif     (thousand tonnes of CO2 per cell, forest land removals)
+#          refs/maps_1km/carbon_missed_flow_gdmp_1km_<year>.tif        (thousand tonnes of CO2 per cell)
+#          refs/maps_1km/carbon_missed_value_constant_gdmp_1km_<year>.tif (million euro, 2010 prices, per cell)
 #          data/outputs/report/                                      small tables for the report
 #          data/outputs/figures/carbon_flow_maps.png, carbon_value_maps.png
 # Method : The weight of a cell is its forest share times its annual productivity. Each cell receives the national value
@@ -78,14 +80,38 @@ for (yr in years_report) {
               overwrite = TRUE, datatype = "FLT4S", gdal = gdal_options)
 }
 
+# Missed flow, which is a balance with no place of its own on the land. The map allocates the national value with the
+# key of the actual flow, so it shows where the removals that compensate emissions are attributed.
+for (yr in years_report) {
+  epoch <- as.character(yr)
+  missed_map <- spread_totals(
+    totals = flow |> filter(year == yr) |> transmute(geo, value = missed_flow_kt_co2),
+    weight = weights[[epoch]],
+    country_ids = country_ids,
+    weight_sums = weight_sums[[epoch]]
+  )
+  names(missed_map) <- paste0("carbon_missed_flow_", yr)
+  writeRaster(missed_map, file.path(gis_dir, sprintf("carbon_missed_flow_gdmp_1km_%s.tif", yr)),
+              overwrite = TRUE, datatype = "FLT4S", gdal = gdal_options)
+  factor_year <- value |> filter(year == yr) |> slice(1) |> mutate(f = price_eur_per_t_co2 * deflator / 1000) |> pull(f)
+  missed_value_map <- rast(file.path(gis_dir, sprintf("carbon_missed_flow_gdmp_1km_%s.tif", yr))) * factor_year
+  names(missed_value_map) <- paste0("carbon_missed_value_constant_", yr)
+  writeRaster(missed_value_map, file.path(gis_dir, sprintf("carbon_missed_value_constant_gdmp_1km_%s.tif", yr)),
+              overwrite = TRUE, datatype = "FLT4S", gdal = gdal_options)
+}
+
 flow_maps <- rast(file.path(gis_dir, sprintf("carbon_flow_gdmp_1km_%s.tif", years_report)))
 value_maps <- rast(file.path(gis_dir, sprintf("carbon_value_constant_gdmp_1km_%s.tif", years_report)))
 no_offset_maps <- rast(file.path(gis_dir, sprintf("carbon_flow_no_offset_gdmp_1km_%s.tif", years_report)))
+missed_maps <- rast(file.path(gis_dir, sprintf("carbon_missed_flow_gdmp_1km_%s.tif", years_report)))
+missed_value_maps <- rast(file.path(gis_dir, sprintf("carbon_missed_value_constant_gdmp_1km_%s.tif", years_report)))
 
 # Checks, which read the maps back from disk and stop the script on failure.
 national_flow <- flow |> filter(year %in% years_report) |> summarise(v = sum(flow_kt_co2), .by = year)
 national_value <- value |> filter(year %in% years_report) |> summarise(v = sum(value_constant_meur), .by = year)
 national_forest <- flow |> filter(year %in% years_report) |> summarise(v = sum(forest_removals_kt_co2), .by = year)
+national_missed <- flow |> filter(year %in% years_report) |> summarise(v = sum(missed_flow_kt_co2), .by = year)
+national_missed_value <- value |> filter(year %in% years_report) |> summarise(v = sum(missed_value_constant_meur), .by = year)
 map_totals <- tibble(
   year = years_report,
   flow_map_mt = global(flow_maps, "sum", na.rm = TRUE)[[1]] / 1000,
@@ -93,7 +119,11 @@ map_totals <- tibble(
   value_map_meur = global(value_maps, "sum", na.rm = TRUE)[[1]],
   value_table_meur = national_value$v[match(years_report, national_value$year)],
   no_offset_map_mt = global(no_offset_maps, "sum", na.rm = TRUE)[[1]] / 1000,
-  forest_removals_mt = national_forest$v[match(years_report, national_forest$year)] / 1000
+  forest_removals_mt = national_forest$v[match(years_report, national_forest$year)] / 1000,
+  missed_map_mt = global(missed_maps, "sum", na.rm = TRUE)[[1]] / 1000,
+  missed_table_mt = national_missed$v[match(years_report, national_missed$year)] / 1000,
+  missed_value_map_meur = global(missed_value_maps, "sum", na.rm = TRUE)[[1]],
+  missed_value_table_meur = national_missed_value$v[match(years_report, national_missed_value$year)]
 )
 
 by_country <- bind_rows(lapply(years_report, \(yr) {
@@ -109,6 +139,8 @@ checks <- bind_rows(
   record_check(map_totals$flow_map_mt, map_totals$flow_table_mt, "1 km flow maps against the tables, in every year", tolerance = 1e-5),
   record_check(map_totals$value_map_meur, map_totals$value_table_meur, "1 km value maps against the tables, in every year", tolerance = 1e-5),
   record_check(map_totals$no_offset_map_mt, map_totals$forest_removals_mt, "1 km maps of forest removals against the tables, in every year", tolerance = 1e-5),
+  record_check(map_totals$missed_map_mt, map_totals$missed_table_mt, "1 km missed flow maps against the tables, in every year", tolerance = 1e-5),
+  record_check(map_totals$missed_value_map_meur, map_totals$missed_value_table_meur, "1 km missed value maps against the tables, in every year", tolerance = 1e-5),
   record_check(by_country$map[by_country$table > 0], by_country$table[by_country$table > 0],
                "1 km flow maps against the tables, in every country and year", tolerance = 1e-5)
 )

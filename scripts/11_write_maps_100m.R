@@ -1,4 +1,4 @@
-# Write the 100 m maps of carbon sequestration, namely the flow without offset, the actual flow and its value.
+# Write the 100 m maps of carbon sequestration, namely the flow without offset, the actual flow, the missed flow and their value.
 #
 # Why    : the 100 m maps are a product of the accounts, and they are too large to version, so they go to
 #          refs/maps_100m/ and are published outside the repository.
@@ -10,16 +10,19 @@
 # Outputs: refs/maps_100m/carbon_flow_gdmp_100m_<year>.tif             (thousand tonnes of CO2 per cell)
 #          refs/maps_100m/carbon_flow_no_offset_gdmp_100m_<year>.tif   (thousand tonnes of CO2 per cell, forest land removals)
 #          refs/maps_100m/carbon_value_constant_gdmp_100m_<year>.tif   (million euro, 2010 prices, per cell)
+#          refs/maps_100m/carbon_missed_flow_gdmp_100m_<year>.tif     (thousand tonnes of CO2 per cell)
+#          refs/maps_100m/carbon_missed_value_constant_gdmp_100m_<year>.tif (million euro, 2010 prices, per cell)
 # Method : The weight of a 100 m cell is 1 for forest (CLC 311, 312, 313 and 324) and 0 otherwise, times the annual
 #          productivity of the year resampled to 100 m (bilinear). Each cell receives the national value
 #          times its weight divided by the weight total of its country, so the cells of a country add up to
 #          the national total. Productivity of 2000, 2006 and 2012 comes from the 1 km product, and that of
 #          2018 and 2024 from the 300 m product. The value map is the flow map times the price per tonne of CO2
 #          and the deflator of the year. The map of the flow without offset spreads the removals of forest land with
-#          the same key, because the other land categories switch between source and sink.
+#          the same key, because the other land categories switch between source and sink. The missed flow is a balance with
+#          no place of its own on the land, so its map allocates the national value with the same key.
 # Run    : source("scripts/11_write_maps_100m.R", encoding = "UTF-8"), from the project root, after script 09.
-#          Needs the files in refs/, takes about half an hour per year and needs several GB of free disk space for
-#          temporary files. Years whose outputs already exist are skipped, so delete them after a change in the tables.
+#          Needs the files in refs/, takes about 45 minutes per year and needs several GB of free disk space for
+#          temporary files. Maps that already exist are skipped, so delete them after a change in the tables.
 
 library(terra)
 library(dplyr)
@@ -60,7 +63,9 @@ for (yr in years_report) {
   flow_file <- file.path(out_dir, sprintf("carbon_flow_gdmp_100m_%s.tif", yr))
   value_file <- file.path(out_dir, sprintf("carbon_value_constant_gdmp_100m_%s.tif", yr))
   no_offset_file <- file.path(out_dir, sprintf("carbon_flow_no_offset_gdmp_100m_%s.tif", yr))
-  if (file.exists(flow_file) && file.exists(value_file) && file.exists(no_offset_file)) next
+  missed_file <- file.path(out_dir, sprintf("carbon_missed_flow_gdmp_100m_%s.tif", yr))
+  missed_value_file <- file.path(out_dir, sprintf("carbon_missed_value_constant_gdmp_100m_%s.tif", yr))
+  if (all(file.exists(c(flow_file, value_file, no_offset_file, missed_file, missed_value_file)))) next
 
   clc <- crop(rast(file.path(clc_dir, sprintf("CLC%sACC_V2024_21.tif", yr))), template)
   levels(clc) <- NULL
@@ -78,29 +83,33 @@ for (yr in years_report) {
     setNames(c("id", "weight_sum")) |>
     inner_join(id_table, by = "id")
 
-  per_weight <- id_table |>
-    left_join(sums, by = c("id", "geo")) |>
-    left_join(flow |> filter(year == yr) |> transmute(geo, total = flow_kt_co2), by = "geo") |>
-    mutate(per_weight = if_else(weight_sum > 0, total / weight_sum, NA_real_)) |>
-    filter(!is.na(per_weight))
+  # Spread one national column over the forest cells, and write the map unless it already exists.
+  write_spread <- function(column, path, layer) {
+    if (file.exists(path)) return(invisible(path))
+    per_weight <- id_table |>
+      left_join(sums, by = c("id", "geo")) |>
+      left_join(flow |> filter(year == yr) |> transmute(geo, total = .data[[column]]), by = "geo") |>
+      mutate(per_weight = if_else(weight_sum > 0, total / weight_sum, NA_real_)) |>
+      filter(!is.na(per_weight))
+    spread <- weight * classify(ids, rcl = as.matrix(per_weight[, c("id", "per_weight")]), others = NA)
+    names(spread) <- layer
+    writeRaster(spread, path, overwrite = TRUE, datatype = "FLT4S", gdal = gdal_opts)
+    invisible(path)
+  }
+  # Value maps are the physical map, read back from disk, times the price per tonne of CO2 and the deflator.
+  write_value <- function(physical_file, path, layer) {
+    if (file.exists(path)) return(invisible(path))
+    value_map <- rast(physical_file) * price_factor$factor[price_factor$year == yr]
+    names(value_map) <- layer
+    writeRaster(value_map, path, overwrite = TRUE, datatype = "FLT4S", gdal = gdal_opts)
+    invisible(path)
+  }
 
-  factor_raster <- classify(ids, rcl = as.matrix(per_weight[, c("id", "per_weight")]), others = NA)
-  flow_map <- weight * factor_raster
-  names(flow_map) <- paste0("carbon_flow_", yr)
-  writeRaster(flow_map, flow_file, overwrite = TRUE, datatype = "FLT4S", gdal = gdal_opts)
-
-  value_map <- rast(flow_file) * price_factor$factor[price_factor$year == yr]
-  names(value_map) <- paste0("carbon_value_constant_", yr)
-  writeRaster(value_map, value_file, overwrite = TRUE, datatype = "FLT4S", gdal = gdal_opts)
-
-  no_offset <- id_table |>
-    left_join(sums, by = c("id", "geo")) |>
-    left_join(flow |> filter(year == yr) |> transmute(geo, total = forest_removals_kt_co2), by = "geo") |>
-    mutate(per_weight = if_else(weight_sum > 0, total / weight_sum, NA_real_)) |>
-    filter(!is.na(per_weight))
-  no_offset_map <- weight * classify(ids, rcl = as.matrix(no_offset[, c("id", "per_weight")]), others = NA)
-  names(no_offset_map) <- paste0("carbon_flow_no_offset_", yr)
-  writeRaster(no_offset_map, no_offset_file, overwrite = TRUE, datatype = "FLT4S", gdal = gdal_opts)
+  write_spread("flow_kt_co2", flow_file, paste0("carbon_flow_", yr))
+  write_value(flow_file, value_file, paste0("carbon_value_constant_", yr))
+  write_spread("forest_removals_kt_co2", no_offset_file, paste0("carbon_flow_no_offset_", yr))
+  write_spread("missed_flow_kt_co2", missed_file, paste0("carbon_missed_flow_", yr))
+  write_value(missed_file, missed_value_file, paste0("carbon_missed_value_constant_", yr))
 
   unlink(file.path(tmp_dir, sprintf("weight_%s.tif", yr)))
 }

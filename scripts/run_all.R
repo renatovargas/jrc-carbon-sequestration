@@ -4,7 +4,7 @@
 #                    data changes the results, so run it deliberately.
 #          tables    scripts 08 and 09. Takes under a minute.
 #          maps_1km  script 10. Takes a few minutes.
-#          maps_100m scripts 11 and 12. Needs the files in refs/, and takes about three hours.
+#          maps_100m scripts 11 and 12. Needs the files in refs/, and takes about four hours.
 # Run    : from the project root, with the stages to run. With no stage named, it runs tables and maps_1km,
 #          which need only the repository.
 #            Rscript scripts/run_all.R

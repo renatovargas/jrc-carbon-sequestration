@@ -324,12 +324,12 @@ $$ {#eq-spread}
 
 We wrote the maps at 1 km, which are a working product kept outside the repository, and at 100 m, which are the published product (see
 [10_write_maps_1km.R in Annex I](#script-10) and [11_write_maps_100m.R in Annex I](#script-11)). At 100 m the forest share is 1 for a forest cell and 0 otherwise, and productivity
-is interpolated bilinearly to the grid. There are three maps for each reporting year. The first is the actual flow, in thousand tonnes of CO2 per
+is interpolated bilinearly to the grid. There are five maps for each reporting year. The first is the actual flow, in thousand tonnes of CO2 per
 cell. The second is its value, in million euro at constant 2010 prices per cell. The third is the flow without the offset, for which a decision was
 made to map the removals of forest land, following @vallecillo2019, because other land categories switch between source and sink across years and
 countries. This map therefore holds less than the flow without the offset in the tables. In 2024 the difference is
 `r num(in_series(2024)$removals / 1000 - map_totals$no_offset_map_mt[map_totals$year == 2024])` million tonnes, which the tables report by region.
-The missed flow is a balance between removals and emissions and has no place of its own on the land, so a decision was made to report it in tables only.
+The fourth and fifth are the missed flow and its value, in the same units as the actual flow and its value. The missed flow is a balance between removals and emissions and has no place of its own on the land, so a decision was made to allocate the national value with the key of the actual flow. These two maps show where the removals that compensate emissions are attributed, and they do not show where any loss of the service occurs.
 
 ## Checks
 
@@ -605,7 +605,7 @@ regions do not add up to their countries. The national values are saved as `carb
 
 This script places the national values on a 1 km grid for each reporting year. The weight of a cell is its forest share times its productivity, and each
 cell receives the national value in proportion to its weight within its country. It writes maps of the actual flow, of its value at constant 2010 prices and of the
-removals of forest land, which stand for the flow without the offset. These maps are a working product kept outside the repository. The script reads them back from
+removals of forest land, which stand for the flow without the offset, and of the missed flow and its value. These maps are a working product kept outside the repository. The script reads them back from
 disk, stops if they disagree with the tables, and saves the small tables of the checks and the two map figures of the report, drawn at 10 km.
 
 ## 11_write_maps_100m.R {#script-11 .unnumbered .unlisted}
@@ -613,15 +613,16 @@ disk, stops if they disagree with the tables, and saves the small tables of the 
 [View on GitHub](https://github.com/renatovargas/jrc-carbon-sequestration/blob/main/scripts/11_write_maps_100m.R)
 
 This script writes the published maps at 100 m, using the same method and the national values of the tables. It works directly from the Corine accounting layers, where
-a cell counts as forest or not, and from the annual productivity of script 05, interpolated to the 100 m grid. It writes three maps for each reporting year, which
-make 15 GeoTIFF files named `carbon_flow_gdmp_100m_<year>.tif`, `carbon_value_constant_gdmp_100m_<year>.tif` and `carbon_flow_no_offset_gdmp_100m_<year>.tif`. These files
+a cell counts as forest or not, and from the annual productivity of script 05, interpolated to the 100 m grid. It writes five maps for each reporting year, which
+make 25 GeoTIFF files named `carbon_flow_gdmp_100m_<year>.tif`, `carbon_value_constant_gdmp_100m_<year>.tif`, `carbon_flow_no_offset_gdmp_100m_<year>.tif`,
+`carbon_missed_flow_gdmp_100m_<year>.tif` and `carbon_missed_value_constant_gdmp_100m_<year>.tif`. These files
 are too large for the repository, so they are published in the external folder linked from the Downloads page.
 
 ## 12_check_maps_100m.R {#script-12 .unnumbered .unlisted}
 
 [View on GitHub](https://github.com/renatovargas/jrc-carbon-sequestration/blob/main/scripts/12_check_maps_100m.R)
 
-This script reads the 15 maps at 100 m back from disk, adds up their cells by country and compares the totals with the national tables. It stops if a country
+This script reads the 25 maps at 100 m back from disk, adds up their cells by country and compares the totals with the national tables. It stops if a country
 or a year differs by more than 0.01 percent. Because the maps stay outside the repository, the script saves this record as `maps_100m_totals.rds` and
 `checks_maps_100m.rds`, and the report reads it from there.
 

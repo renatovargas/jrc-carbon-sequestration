@@ -4,6 +4,7 @@
 #          up to its national value, and the report reads that record.
 # Inputs : refs/maps_100m/carbon_flow_gdmp_100m_<year>.tif and carbon_value_constant_gdmp_100m_<year>.tif (script 11)
 #          refs/maps_100m/carbon_flow_no_offset_gdmp_100m_<year>.tif (script 11)
+#          refs/maps_100m/carbon_missed_flow_gdmp_100m_<year>.tif and carbon_missed_value_constant_gdmp_100m_<year>.tif (script 11)
 #          data/outputs/results/carbon_flow_country_year.rds (script 08)
 #          data/outputs/results/carbon_value_country_year.rds (script 09)
 #          data/inputs/gis/NUTS_RG_01M_2024_3035_LEVL0.gpkg (script 01)
@@ -12,7 +13,7 @@
 # Method : Each map is added up by country in blocks, one map at a time, so little memory is needed. The script stops
 #          if a country or a year disagrees with the tables.
 # Run    : source("scripts/12_check_maps_100m.R", encoding = "UTF-8"), from the project root, after script 11. Needs the
-#          files in refs/, and takes about ten minutes in total.
+#          files in refs/, and takes about 15 minutes in total.
 
 source("scripts/helpers_common.R", encoding = "UTF-8")
 source("scripts/helpers_carbon.R", encoding = "UTF-8")
@@ -47,14 +48,18 @@ maps <- bind_rows(lapply(years_report, \(yr) {
   bind_rows(
     sum_by_country(sprintf("refs/maps_100m/carbon_flow_gdmp_100m_%s.tif", yr), yr, "flow_kt_co2"),
     sum_by_country(sprintf("refs/maps_100m/carbon_value_constant_gdmp_100m_%s.tif", yr), yr, "value_meur2010"),
-    sum_by_country(sprintf("refs/maps_100m/carbon_flow_no_offset_gdmp_100m_%s.tif", yr), yr, "forest_removals_kt_co2")
+    sum_by_country(sprintf("refs/maps_100m/carbon_flow_no_offset_gdmp_100m_%s.tif", yr), yr, "forest_removals_kt_co2"),
+    sum_by_country(sprintf("refs/maps_100m/carbon_missed_flow_gdmp_100m_%s.tif", yr), yr, "missed_flow_kt_co2"),
+    sum_by_country(sprintf("refs/maps_100m/carbon_missed_value_constant_gdmp_100m_%s.tif", yr), yr, "missed_value_meur2010")
   )
 }))
 
 tables <- bind_rows(
   flow |> filter(year %in% years_report) |> transmute(geo, year, quantity = "flow_kt_co2", table = flow_kt_co2),
   value |> filter(year %in% years_report) |> transmute(geo, year, quantity = "value_meur2010", table = value_constant_meur),
-  flow |> filter(year %in% years_report) |> transmute(geo, year, quantity = "forest_removals_kt_co2", table = forest_removals_kt_co2)
+  flow |> filter(year %in% years_report) |> transmute(geo, year, quantity = "forest_removals_kt_co2", table = forest_removals_kt_co2),
+  flow |> filter(year %in% years_report) |> transmute(geo, year, quantity = "missed_flow_kt_co2", table = missed_flow_kt_co2),
+  value |> filter(year %in% years_report) |> transmute(geo, year, quantity = "missed_value_meur2010", table = missed_value_constant_meur)
 )
 
 compared <- tables |>
