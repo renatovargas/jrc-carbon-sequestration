@@ -1,0 +1,396 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Carbon Sequestration",
+    "section": "",
+    "text": "This site presents the carbon sequestration ecosystem service accounts of the European Union for 2000, 2006, 2012, 2018 and 2024. Carbon sequestration is the uptake of carbon dioxide from the atmosphere by ecosystems, which contributes to global climate regulation. The accounts measure the removals of land, the net flow that reaches society after the emissions of land use are offset, and the part of the removals that those emissions use up, in physical and monetary terms.\nThe report describes the methods, the decisions taken along the way and the results. The Downloads page holds the tables by NUTS region and the 100 m maps. The numbered scripts in the folder https://github.com/renatovargas/jrc-carbon-sequestration/tree/main/scripts reproduce the work, and Annex I of the report explains each of them."
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html",
+    "href": "documentation/methods/carbon-sequestration/index.html",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "",
+    "text": "We provide estimates of the carbon sequestration ecosystem service for the 27 Member States of the European Union in 2000, 2006, 2012, 2018 and 2024, following the accounting method of Vallecillo et al. (2019) and its update in La Notte et al. (2021). In 2024, land removes 375.0 million tonnes of CO2 and emits 139.1 million tonnes. The actual flow that reaches society after this offset is 236.0 million tonnes, against 326.3 million tonnes in 2000, and it is worth 16.3 billion euro at constant 2010 prices. The missed flow, which is the part of the removals used up by those emissions, is worth 9.6 billion euro. The value rests on a social cost of carbon of EUR 343.6 per tonne of carbon, which is EUR 93.7 per tonne of CO2, in 2023 euros.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#overview",
+    "href": "documentation/methods/carbon-sequestration/index.html#overview",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.1 Overview",
+    "text": "2.1 Overview\nNational greenhouse gas inventories report CO2 by country, and they do not report it by place. The accounts therefore work in two stages. They first build the national and regional values, which is a statistical problem, and they then place the national values on a map, which is a spatial problem. Monetary values follow from the physical ones through a price per tonne.\nThe analysis covers the EU27, with 239 NUTS2 regions and 1160 NUTS3 regions under the NUTS 2024 boundaries (Eurostat GISCO, 2024), and maps use the projection EPSG:3035, in which every cell covers the same area on the ground (see 01_prepare_nuts.R in Annex I).",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#removals-and-emissions",
+    "href": "documentation/methods/carbon-sequestration/index.html#removals-and-emissions",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.2 Removals and emissions",
+    "text": "2.2 Removals and emissions\nWe took CO2 by source sector from the Eurostat dataset env_air_gge (Eurostat, 2026b), in the release retrieved on 2026-10-30, for the 27 Member States and the EU27 aggregate (see 02_download_eurostat.R in Annex I). Following Vallecillo et al. (2019), the land categories are forest land, cropland, grassland, wetlands, settlements and other land, which are the codes CRF4A to CRF4F.\nThe inventory uses the point of view of the atmosphere, so a negative value is CO2 removed and a positive value is CO2 released. The accounts reverse the sign, so that a positive balance \\(b\\) of category \\(k\\) in country \\(c\\) is uptake. The removals \\(R\\) and emissions \\(E\\) are the two parts of that balance.\n\\[\nR_{k,c} = \\max(b_{k,c},\\, 0), \\qquad E_{k,c} = \\max(-b_{k,c},\\, 0)\n\\tag{1}\\]\nA category that is a net source in a year therefore counts fully as an emission and adds nothing to the removals of that year. Forest land is a net source in several countries, as Table 3 shows for the reporting years. A category that a country does not report is set to zero and listed. Among the six land categories, this concerns only other land in Denmark, in 25 years. The residual category CRF4H, which 14 of the 27 countries report, stays outside the account. The calculations of this section and the next two are carried out by the same script (see 08_build_physical_accounts.R in Annex I).\n\n\n\n\nTable 3: Countries where forest land is a net source of CO2 in the reporting years, in thousand tonnes of CO2.\n\n\n\nYearCountryBalance of forest land (kt CO2)2018DE-6,9112018EE-1,7782018AT-1,0282018SI-9682018CZ-8432024AT-2,6422024DE-1,6482024PT-261\n\n\n\n\n\n\n2.2.1 Harvested wood products\nThe inventory reports the change in the stock of harvested wood products as its own category, CRF4G. A deduction of that sink from the removals of forest land is one possible treatment, since the carbon in harvested wood has left the forest. The carbon chapters of Vallecillo et al. (2019) and La Notte et al. (2021) take forest uptake from the inventory as reported and make no such deduction, and the handbook of Eurostat keeps these products out of net sequestration as a separate category (Eurostat, 2026a, para. 9.56). A decision was therefore made not to deduct them. The sink stays outside the flow as a memo item, at 24.8 million tonnes in 2024.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#the-offset-and-the-actual-flow",
+    "href": "documentation/methods/carbon-sequestration/index.html#the-offset-and-the-actual-flow",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.3 The offset and the actual flow",
+    "text": "2.3 The offset and the actual flow\nLa Notte et al. (2021) define the service that reaches society as the balance of removals and emissions over all ecosystem types at the level of the European Union, so an ecosystem type with more emissions than removals provides no service. The EU net flow is computed once.\n\\[\nN = \\sum_{k,c} R_{k,c} - \\sum_{k,c} E_{k,c}\n\\tag{2}\\]\nLa Notte et al. (2021) then attribute this net flow to each country \\(c\\) in proportion to its removals of forest land \\(R_{F,c}\\), in their Equation 6.1.\n\\[\nF_c = N \\, \\frac{R_{F,c}}{\\sum_{c} R_{F,c}}\n\\tag{3}\\]\nThe flow without the offset \\(W_c\\) of a country is the sum of its removals over the six land categories, and the missed flow \\(M_c\\) is the difference between that and the actual flow.\n\\[\nW_c = \\sum_{k} R_{k,c}, \\qquad M_c = W_c - F_c\n\\tag{4}\\]\nAt the level of the European Union, the missed flow equals total emissions by construction. The definition follows from the distinction that La Notte et al. (2021) draw between the role of forests, shown by removals, and the contribution to society, shown by the actual flow.\n\n2.3.1 Choice of the allocation key\nNet annual increment, which is the growth of living trees minus natural mortality, is another candidate for the key in Equation 3, because it measures forest growth and does not depend on the sign of the inventory. We compared the two approaches in a run that used net annual increment of all forest from Eurostat (Eurostat, 2026d) and also deducted harvested wood products (Table 4). That run assigned a flow to countries whose forest land was a net source, including 26.1 million tonnes to Germany in 2024, and it left between 7 and 12 countries with a negative missed flow in each reporting year, which has no direct reading as a service that is not delivered. The series of net annual increment also carried breaks between years, and very few countries had reported it for 2024, so most of the key of that year would have repeated earlier values.\nA decision was made to follow Equation 6.1. Under this key no country has a negative missed flow, and a country whose forest land is a net source receives no flow, which agrees with the definition of the service. The comparison was run once, so the pipeline does not repeat it, and the table keeps its result. The sink in that table adds up the countries where the category is a sink, so it is slightly larger than the net balance of the category that the text above and Table 6 report.\n\n\n\n\nTable 4: EU27 actual flow under the method of this report and under the compared run, in million tonnes of CO2, with the number of countries with a negative missed flow.\n\n\n\nYearActual flow, this reportActual flow, compared runHarvested wood products sinkNegative missed flow, this reportNegative missed flow, compared run2000326.3280.946.3072006355.1292.662.90122012371.7340.031.7082018225.2194.240.2092024236.0213.025.808",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#allocation-to-emitting-sectors",
+    "href": "documentation/methods/carbon-sequestration/index.html#allocation-to-emitting-sectors",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.4 Allocation to emitting sectors",
+    "text": "2.4 Allocation to emitting sectors\nVallecillo et al. (2019) complement the accounts with a table that attributes the flow of each country to the economic sectors in proportion to their share of its total CO2 emissions, which shows which sectors the service offsets. The allocation does not change the flow. We grouped the source categories of the inventory into energy supply, manufacturing and construction, transport, agriculture, forestry and fishing, households, services and other, and waste. These keep the sector names of the inventory, which differ from the industries of the national accounts, as the fuel that households burn in their cars is reported under transport.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#regional-values",
+    "href": "documentation/methods/carbon-sequestration/index.html#regional-values",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.5 Regional values",
+    "text": "2.5 Regional values\nNUTS2 and NUTS3 regions receive a share of the national values (see 06_prepare_nuts_weights.R in Annex I for the shares, and 09_build_monetary_accounts.R in Annex I for the regional results). The actual flow of a region is the national flow times the share of the region in the forest weight of its country, which is the spatial key described below. The flow without the offset of a region adds up the removals of the six land categories, each shared in proportion to the area of that category in the region according to the Corine accounting layer of the year. The missed flow of a region is the difference between the two. When a country has no mapped area of a category, the share of the region in the total mapped land of the country stands in. This concerns only LU and MT.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#monetary-valuation",
+    "href": "documentation/methods/carbon-sequestration/index.html#monetary-valuation",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.6 Monetary valuation",
+    "text": "2.6 Monetary valuation\nThe value of a flow is the flow in tonnes of CO2 multiplied by a price per tonne. The accounts need a price for the damage avoided by a tonne of CO2 that stays out of the atmosphere. Vallecillo et al. (2019) use the benchmark of EUR 30 per tonne of CO2 from OECD (2016), which they describe as a reference point and as a lower-end estimate. A decision was made to use a social cost of carbon instead, which is the value of the damage that one additional tonne causes, because it reflects the long-term damage of climate change and does not depend on the conditions of a carbon market in a given year.\nThe value draws on the meta-analysis of published estimates by Tol (2023). That work standardises every estimate to 2010 US dollars per tonne of carbon, for emissions in 2010 (Tol, 2022), and its update finds a weighted mean of 207 US$ per tonne of carbon, which rises to between 231 and 253 US$ when older studies are discounted (Tol, 2025). A decision was made to adopt 266 US$ per tonne of carbon in 2010 prices, which lies just above that range and well below the kernel mean of 509 US$ in Tol (2022), whose long right tail reflects the large uncertainty of these estimates. We moved it to 2023 prices with the consumer price index of the United States (U.S. Bureau of Labor Statistics, 2023), a factor of 304.70/218.06, and to euros at the rate of 1.0813 US$ per euro in 2023 (European Central Bank, 2023). Those steps lead to about EUR 344, and the accounts use EUR 343.6 per tonne of carbon. One tonne of CO2 holds 12/44 of a tonne of carbon, so the price is EUR 93.7 per tonne of CO2 in 2023 euros (see 07_prepare_carbon_price.R in Annex I).\nThe social cost of carbon is a single real value, so we held it constant in 2023 euros and moved it to the prices of each year \\(t\\) with the harmonised index of consumer prices \\(H\\) of the European Union (Eurostat, 2026c) (see 03_download_hicp.R in Annex I). Constant prices of 2010 remove general inflation, so values of different years can be compared.\n\\[\nP_t = P_{2023}\\, \\frac{H_t}{H_{2023}}, \\qquad V^{\\text{current}}_{c,t} = F_{c,t}\\, P_t, \\qquad\nV^{\\text{constant}}_{c,t} = V^{\\text{current}}_{c,t}\\, \\frac{H_{2010}}{H_t}\n\\tag{5}\\]\nThe price moves from EUR 54.2 per tonne of CO2 in 2000 to EUR 96.1 in 2024 in current prices. The missed flow is valued in the same way (see 09_build_monetary_accounts.R in Annex I). The handbook of Eurostat does not value this service (Eurostat, 2026a).",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#maps",
+    "href": "documentation/methods/carbon-sequestration/index.html#maps",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.7 Maps",
+    "text": "2.7 Maps\n\n2.7.1 The spatial key\nVallecillo et al. (2019) map forest land only, since it is the one ecosystem type for which almost all countries report uptake, and they spread the national values with dry matter productivity over the woodland and forest of Corine Land Cover. We followed that approach, with the two more recent products that the Earth observation roadmap of the same programme names (Zurbarán Nucci et al., 2025).\nForest comes from the Corine accounting layers, which the European Environment Agency prepares for comparison between years, in version 21 for all five years (European Environment Agency, 2026). The classes are broad-leaved forest (311), coniferous forest (312), mixed forest (313) and transitional woodland and shrub (324). We reduced them from 100 m to the share of each 1 km cell (see 04_prepare_clc.R in Annex I).\nProductivity is the annual sum of the 36 ten-day GDMP values of the Copernicus Land Monitoring Service, each multiplied by its number of days. The 1 km product, version 2, covers 2000, 2006 and 2012 (Copernicus Land Monitoring Service, n.d.-a), and it ends in 2020. The 300 m product, version 2, covers 2018 and 2024 (Copernicus Land Monitoring Service, n.d.-b), and it starts in 2014 (see 05_prepare_gdmp.R in Annex I). Since 2018 exists in both, we compared them over 2.0 million cells that are mostly forest. The correlation is 0.967, and the mean of the 300 m product is 94.0 percent of the mean of the 1 km product. Weights only share a national value among the cells of a country, so a difference in level between the products changes no national total. The comparison was run once, and the pipeline keeps its result only when the 1 km product of 2018 is available.\nThe weight of a cell \\(i\\) is its forest share \\(S_i\\) times its annual productivity \\(G_i\\), and each cell receives its part of the national value.\n\\[\nF_i = F_c\\, \\frac{S_i\\, G_i}{\\sum_{i \\in c} S_i\\, G_i}\n\\tag{6}\\]\n\n\n2.7.2 Products\nWe wrote the maps at 1 km, which are a working product kept outside the repository, and at 100 m, which are the published product (see 10_write_maps_1km.R in Annex I and 11_write_maps_100m.R in Annex I). At 100 m the forest share is 1 for a forest cell and 0 otherwise, and productivity is interpolated bilinearly to the grid. There are three maps for each reporting year. The first is the actual flow, in thousand tonnes of CO2 per cell. The second is its value, in million euro at constant 2010 prices per cell. The third is the flow without the offset, for which a decision was made to map the removals of forest land, following Vallecillo et al. (2019), because other land categories switch between source and sink across years and countries. This map therefore holds less than the flow without the offset in the tables. In 2024 the difference is 34.0 million tonnes, which the tables report by region. The missed flow is a balance between removals and emissions and has no place of its own on the land, so a decision was made to report it in tables only.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#checks",
+    "href": "documentation/methods/carbon-sequestration/index.html#checks",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "2.8 Checks",
+    "text": "2.8 Checks\nThe scripts stop if any check fails. Table 5 records the largest gap of each check. The sectors differ from total emissions without land use only for SE in 2022, where the inventory holds 6.1 million tonnes in the total that it does not hold in the sectors, and this year is not one of the reporting years. The total of land use, CRF4, equals the sum of its parts in the reporting years, with a largest difference of 0.07 thousand tonnes.\n\n\n\n\nTable 5: Consistency checks, with the largest gap and the tolerance that would stop the scripts. Gaps are relative unless they are marked as absolute.\n\n\n\nCheckLargest gapToleranceTypeShares of the forest removals add up to one in every year1.1e-161e-06RelativeNational flows add up to the EU net flow in every year1.3e-161e-06RelativeMissed flow adds up to the EU emissions in every year4.3e-161e-06RelativeFlow without offset equals actual flow plus missed flow4.5e-131e-09AbsoluteSector shares add up to one in every country and year2.2e-161e-06RelativeSectors add up to total CO2 emissions without land use2.2e-035e-03RelativeCountries add up to the EU27 aggregate of Eurostat, in kt CO24.0e-021e-01AbsoluteThe deflator equals one in the base year0.0e+001e-12RelativeConstant values equal current values times the deflator0.0e+001e-09AbsoluteActual value plus missed value equals the value without offset9.1e-131e-09AbsoluteNUTS2 and NUTS3 regions add up to the countries, in every table, metric and year2.1e-161e-06Relative1 km flow maps against the tables, in every year4.7e-111e-05Relative1 km value maps against the tables, in every year7.1e-111e-05Relative1 km maps of forest removals against the tables, in every year3.9e-111e-05Relative1 km flow maps against the tables, in every country and year1.2e-081e-05Relative100 m maps against the tables, in every country and year5.7e-081e-04Relative100 m maps against the tables, in every year1.6e-081e-04Relative\n\n\n\n\n\nWe read the maps back from disk to compare them with the tables. At 1 km, the forest area of the grid is 157.4 million hectares in 2024, the same as in the table of regions. At 100 m, the largest difference from the tables in any year is 1.6e-06 percent (see 12_check_maps_100m.R in Annex I). The number of countries that hold a flow and lack forest cells, which would lose that flow on the map, is 0.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#removals-emissions-and-actual-flow",
+    "href": "documentation/methods/carbon-sequestration/index.html#removals-emissions-and-actual-flow",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.1 Removals, emissions and actual flow",
+    "text": "3.1 Removals, emissions and actual flow\nForest land provides 91 percent of the removals in 2024, and the other five land categories are net emitters at the level of the European Union (Table 6). The balance of forest land falls from 477.0 million tonnes in 2012 to 311.6 million tonnes in 2018, and that fall drives the series (Figure 1). Emissions change much less. As a result, the actual flow falls from 371.7 to 225.2 million tonnes between the same years, and then recovers to 236.0 million tonnes in 2024. Values of recent years may change with new releases of the inventory.\n\n\n\n\nTable 6: Signed balance by category in the EU27, in million tonnes of CO2, with uptake as positive. The last two categories stay outside the flow.\n\n\n\nCategory20002006201220182024Forest land450.5469.5477.0311.6336.4Cropland-67.4-58.6-44.0-34.2-44.9Grassland-20.0-13.0-16.3-4.0-3.5Wetlands-12.2-15.6-14.3-17.6-14.2Settlements-23.1-25.9-29.2-28.7-35.9Other land-1.5-1.4-1.5-1.9-1.9Harvested wood products45.562.531.339.824.8Other-0.6-0.3-0.1-0.1-0.0\n\n\n\n\n\n\n\n\n\nTable 7: Flow without offset, emissions, actual flow and missed flow in the EU27, in million tonnes of CO2.\n\n\n\nYearFlow without offsetEmissionsActual flowMissed flow2000470.3144.0326.3144.02006497.5142.4355.1142.42012498.5126.9371.7126.92018366.8141.6225.2141.62024375.0139.1236.0139.1\n\n\n\n\n\n\n\n\n\n\n\nFigure 1: Removals, emissions and actual flow in the EU27, 2000 to 2024.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#countries",
+    "href": "documentation/methods/carbon-sequestration/index.html#countries",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.2 Countries",
+    "text": "3.2 Countries\nUnder Equation 3, the actual flow of a country follows its forest removals, so the flow is concentrated. Five countries hold 77 percent of the actual flow in 2024, led by FR, IT, SE, ES, PL (Table 8 and Figure 2). In 2024 3 countries have no forest removals, and in 2018 there are 5, whereas no country is in that position in 2000, 2006 or 2012. These countries have no actual flow in those years. Germany held 36.7 million tonnes in 2012, and it holds none in 2018 or 2024.\n\n\n\n\nTable 8: Accounts by country in 2024, in thousand tonnes of CO2, with values in million euro at constant 2010 prices.\n\n\n\nCountryNational balanceFlow without offsetActual flowMissed flowValue of actual flowValue of missed flowFR43,20865,25744,51420,7423,0711,431IT62,60863,73440,06023,6742,7631,633SE52,07856,44738,73817,7092,6721,222ES50,67652,16633,12919,0372,2851,313PL23,84438,73924,53114,2081,692980RO31,14936,69416,99819,6971,1721,359BG7,6448,6105,6352,976389205LT6,0977,6514,9622,689342185HU5,9946,4364,4212,015305139HR4,1684,9363,2561,680225116SI4,1494,4622,9751,487205103SK4,4994,7042,8931,811200125DK6033,5432,4521,09116975CZ3,3763,7382,0171,721139119IE5352,8541,97587913661NL-2,8522,4351,68575011652FI-9,5312,1541,49166310346BE6922,0421,3846589545EL4,6094,8861,2183,66884253LV-2,7118575932644118EE-2,2869975124843533LU6326644022612818CY1912061347295MT-150500AT-5,23000000DE-47,79900000PT-3658100810056\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Actual flow and flow without offset by country, 2024.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#regions",
+    "href": "documentation/methods/carbon-sequestration/index.html#regions",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.3 Regions",
+    "text": "3.3 Regions\nThe workbook holds every quantity at NUTS0, NUTS2 and NUTS3. Table 9 lists the NUTS2 regions with the largest actual flow in 2024, which are the large forest regions of the countries with the highest removals.\n\n\n\n\nTable 9: NUTS2 regions with the largest actual flow in 2024, in thousand tonnes of CO2, with the value in million euro at constant 2010 prices.\n\n\n\nCodeRegionActual flowFlow without offsetMissed flowValue of actual flowSE33Övre Norrland10,20614,9384,732704SE31Norra Mellansverige7,79611,2763,480538SE32Mellersta Norrland6,4319,3362,905444FRI1Aquitaine5,7108,2902,580394ES41Castilla y León5,5138,8383,325380ITI1Toscana5,2327,9002,667361FRK2Rhône-Alpes4,7927,0102,218331SE12Östra Mellansverige4,6246,7232,099319SE21Småland med öarna4,5686,6752,106315ES11Galicia4,4366,5562,120306",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#maps-1",
+    "href": "documentation/methods/carbon-sequestration/index.html#maps-1",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.4 Maps",
+    "text": "3.4 Maps\nFigure 3 shows the actual flow, drawn at 10 km so that it reads at this size. Forest regions of high productivity stand out within each country, and the differences between countries reflect their national values, so borders can show as steps in the map. Vallecillo et al. (2019) note the same effect. Countries with no forest removals in a year appear blank in that panel, as Germany does in 2018 and 2024. The mean productivity on forest rises from 23,500 to 26,664 kilograms per hectare between 2012 and 2018, although the 300 m product runs below the 1 km product in the year they share, so the change of product does not explain the rise. Productivity only places values within a country, so this has no effect on national totals. The value maps in Figure 4 follow the same pattern, since they multiply the flow by one price per year.\n\n\n\n\n\n\nFigure 3: Actual flow at 10 km, in thousand tonnes of CO2 per cell, on a square root scale.\n\n\n\n\n\n\n\n\n\nFigure 4: Value of the actual flow at 10 km, in million euro at constant 2010 prices per cell, on a square root scale.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#value",
+    "href": "documentation/methods/carbon-sequestration/index.html#value",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.5 Value",
+    "text": "3.5 Value\nThe actual flow is worth 16.3 billion euro in 2024 at constant 2010 prices, and 22.7 billion euro in current prices (Table 10 and Figure 5). Constant values follow the physical flow, because the real price is fixed. The missed flow is worth between 8.8 and 9.9 billion euro in the reporting years, since emissions change little.\n\n\n\n\nTable 10: Value in the EU27, in million euro.\n\n\n\nYearActual flow, current pricesActual flow, constant 2010 pricesMissed flow, constant 2010 prices200017,69522,5109,933200622,48324,4989,820201227,06125,6398,751201817,29215,5329,768202422,68916,2789,592\n\n\n\n\n\n\n\n\n\n\n\nFigure 5: Value of the actual flow and of the missed flow in the EU27, at constant 2010 prices.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#sectors",
+    "href": "documentation/methods/carbon-sequestration/index.html#sectors",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.6 Sectors",
+    "text": "3.6 Sectors\nTable 11 shows the actual flow attributed to the sectors that emit CO2. The largest part goes to energy supply in 2012 and to transport in 2024. The attribution follows the emissions of each country weighted by its flow, so it also shifts when the flow moves between countries.\n\n\n\n\nTable 11: Actual flow attributed to emitting sectors in the EU27, in million tonnes of CO2.\n\n\n\nSector20002006201220182024Transport77.489.8101.071.592.0Energy supply111.9125.0128.765.452.8Manufacturing and construction85.785.383.151.752.8Households29.430.632.819.819.2Services and other12.915.215.39.410.3Agriculture, forestry and fishing8.79.010.47.18.6Waste0.20.40.40.30.3",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#comparison-with-the-published-accounts",
+    "href": "documentation/methods/carbon-sequestration/index.html#comparison-with-the-published-accounts",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "3.7 Comparison with the published accounts",
+    "text": "3.7 Comparison with the published accounts\nLa Notte et al. (2021) report an actual flow of 306 million tonnes of CO2 in 2012 in their main tables, and 303 million tonnes in one passage of the text, from forest removals of 444 million tonnes. We obtain 371.7 million tonnes (Table 12). The comparison serves for orientation only, because they report the EU-28 with an earlier release of the inventory, and countries revise past years in each release. The price also differs by design. Their flow of 2012 is valued at 9,189 million euro, which implies EUR 30.0 per tonne, whereas the price here in 2012 is EUR 72.8 per tonne in current prices.\n\n\n\n\nTable 12: Actual flow in this report (EU27) and in La Notte et al. (2021), Table 6.7 (EU-28), in million tonnes of CO2.\n\n\n\nYearThis reportPublishedDifference (%)2000326.3291.611.92006355.1292.221.52012371.7306.321.3",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-01",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-01",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "01_prepare_nuts.R",
+    "text": "01_prepare_nuts.R\nView on GitHub\nThis script takes the NUTS 2024 boundaries of Eurostat at a scale of 1:1 million (Eurostat GISCO, 2024), in the copy distributed with the INCA plugin, and keeps only the level of countries. It marks the 27 Member States and stops if it does not find all of them. The result is a small file, NUTS_RG_01M_2024_3035_LEVL0.gpkg, which the later scripts use to identify the countries and to draw the maps, and the copyright notice of the boundaries is copied next to it.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-02",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-02",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "02_download_eurostat.R",
+    "text": "02_download_eurostat.R\nView on GitHub\nThis script downloads the CO2 emissions and removals by source sector from the Eurostat dataset env_air_gge (Eurostat, 2026b) through the Eurostat data service. It keeps the values in thousand tonnes for the 27 Member States and the EU27 aggregate from 1990 to 2024, drops the rows with no reported value and records the date of the download. The table is saved as env_air_gge_co2.rds for the physical accounts. A new release of the dataset changes the results, so this step runs only when an update is intended.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-03",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-03",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "03_download_hicp.R",
+    "text": "03_download_hicp.R\nView on GitHub\nThis script downloads the annual harmonised index of consumer prices of the EU27, for all items and with 2015 as its base (Eurostat, 2026c). The series is saved as hicp_eu27.rds, which the carbon price and the constant prices of the monetary accounts use.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-04",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-04",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "04_prepare_clc.R",
+    "text": "04_prepare_clc.R\nView on GitHub\nThis script reads the Corine Land Cover accounting layers at 100 m for the five reporting years (European Environment Agency, 2026) and groups their classes into the six land categories of the inventory, leaving water bodies out. It reduces each layer to the share of every 1 km cell covered by each category. The forest share of each year is saved as CLC&lt;year&gt;_forest_pct_1km.tif, in whole percentages, which brings a layer of about 175 MB down to a file of under 4 MB. The script then adds up the hectares of each category in every country and in every NUTS2 and NUTS3 region, and it saves them as clc_ecosystem_area_by_nuts.rds. The later scripts use these files to weigh regions and cells.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-05",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-05",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "05_prepare_gdmp.R",
+    "text": "05_prepare_gdmp.R\nView on GitHub\nThis script builds the annual productivity that places the flow on the map. For each year it reads the 36 ten-day files of Gross Dry Matter Productivity from the Copernicus data store, using the 1 km product for 2000, 2006 and 2012 (Copernicus Land Monitoring Service, n.d.-a) and the 300 m product for 2018 and 2024 (Copernicus Land Monitoring Service, n.d.-b). It keeps the part of each file that covers Europe, multiplies each daily rate by the number of days it represents, counts missing cells as zero and adds up the year. This annual file stays outside the repository at its original resolution for the 100 m maps, and a copy on the 1 km grid of the accounts is saved as GDMP_&lt;year&gt;_1km.tif. Because 2018 exists in both products, the script also compares them over the cells that are mostly forest and saves the result as gdmp_comparison.rds for the report. The store requires a free Copernicus account only when an annual file has to be built again.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-06",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-06",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "06_prepare_nuts_weights.R",
+    "text": "06_prepare_nuts_weights.R\nView on GitHub\nThis script works out the share of each NUTS2 and NUTS3 region in the national total of each land category. The weight of forest is the forest share of each 1 km cell times its productivity in the same year, added up over the region, and the weight of the other categories is their area in hectares. When a country has no mapped area of a category, the share of the region in the total mapped land of the country stands in, and the row is marked. The shares are saved as clc_type_weight_by_nuts.rds, which the monetary accounts use to build the regional results.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-07",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-07",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "07_prepare_carbon_price.R",
+    "text": "07_prepare_carbon_price.R\nView on GitHub\nThis script sets the social cost of carbon at EUR 343.6 per tonne of carbon in 2023 euros, based on Tol (2023), and converts it to tonnes of CO2 with the ratio of 12/44. It holds that value constant in real terms and moves it to the prices of each year from 2000 to 2024 with the consumer price index. The series is saved as carbon_price.rds for the monetary accounts.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-08",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-08",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "08_build_physical_accounts.R",
+    "text": "08_build_physical_accounts.R\nView on GitHub\nThis script builds the physical accounts for every year from 2000 to 2024, following Vallecillo et al. (2019) and La Notte et al. (2021). It reverses the sign of the inventory, separates the removals and emissions of each land category in each country and computes the net flow once for the European Union. It attributes that flow to countries in proportion to their removals of forest land, and it derives the flow without the offset and the missed flow. It then shares the flow of each country among the sectors that emit CO2. The script checks that countries add up to the Eurostat aggregate, that shares add up to one and that the flows agree with each other, and it stops if any check fails. The results are saved as carbon_lulucf_country_year.rds, carbon_flow_country_year.rds and carbon_sector_allocation_country_year.rds, together with the small tables and the figures of the report.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-09",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-09",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "09_build_monetary_accounts.R",
+    "text": "09_build_monetary_accounts.R\nView on GitHub\nThis script multiplies the physical flows by the carbon price of each year to obtain their value in current prices, and it applies the consumer price index to express them in constant 2010 prices. For the reporting years it then shares the national values among NUTS2 and NUTS3 regions, and it stops if the regions do not add up to their countries. The national values are saved as carbon_value_country_year.rds, and the tables by NUTS level form the workbook carbon_sequestration_results.xlsx on the Downloads page. The small tables and the value figure of the report are saved as well.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-10",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-10",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "10_write_maps_1km.R",
+    "text": "10_write_maps_1km.R\nView on GitHub\nThis script places the national values on a 1 km grid for each reporting year. The weight of a cell is its forest share times its productivity, and each cell receives the national value in proportion to its weight within its country. It writes maps of the actual flow, of its value at constant 2010 prices and of the removals of forest land, which stand for the flow without the offset. These maps are a working product kept outside the repository. The script reads them back from disk, stops if they disagree with the tables, and saves the small tables of the checks and the two map figures of the report, drawn at 10 km.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-11",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-11",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "11_write_maps_100m.R",
+    "text": "11_write_maps_100m.R\nView on GitHub\nThis script writes the published maps at 100 m, using the same method and the national values of the tables. It works directly from the Corine accounting layers, where a cell counts as forest or not, and from the annual productivity of script 05, interpolated to the 100 m grid. It writes three maps for each reporting year, which make 15 GeoTIFF files named carbon_flow_gdmp_100m_&lt;year&gt;.tif, carbon_value_constant_gdmp_100m_&lt;year&gt;.tif and carbon_flow_no_offset_gdmp_100m_&lt;year&gt;.tif. These files are too large for the repository, so they are published in the external folder linked from the Downloads page.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-12",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-12",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "12_check_maps_100m.R",
+    "text": "12_check_maps_100m.R\nView on GitHub\nThis script reads the 15 maps at 100 m back from disk, adds up their cells by country and compares the totals with the national tables. It stops if a country or a year differs by more than 0.01 percent. Because the maps stay outside the repository, the script saves this record as maps_100m_totals.rds and checks_maps_100m.rds, and the report reads it from there.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-run-all",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-run-all",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "run_all.R",
+    "text": "run_all.R\nView on GitHub\nThis script runs the numbered scripts in order, grouped into four stages, which are the inputs (scripts 01 to 07), the tables (08 and 09), the 1 km maps (10) and the 100 m maps (11 and 12). With no stage named it runs the tables and the 1 km maps, which need only the repository.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/methods/carbon-sequestration/index.html#script-helpers",
+    "href": "documentation/methods/carbon-sequestration/index.html#script-helpers",
+    "title": "Carbon Sequestration Ecosystem Service Accounts",
+    "section": "Helper files",
+    "text": "Helper files\nView on GitHub: helpers_common.R, helpers_carbon.R, helpers_monetary.R, helpers_results.R and helpers_report.R\nThese files hold the steps that several scripts share, and they do not run on their own. The first holds the common work with grids, regions, saved tables and checks. The second holds the formulas of the physical accounts and the style of the figures. The third prepares the deflator of the constant prices, the fourth builds the regional tables and the workbook, and the fifth formats the tables of this report.",
+    "crumbs": [
+      "Documents",
+      "Methods",
+      "Carbon Sequestration Ecosystem Service Accounts"
+    ]
+  },
+  {
+    "objectID": "documentation/index.html",
+    "href": "documentation/index.html",
+    "title": "Documents",
+    "section": "",
+    "text": "This section collects the reports on the carbon sequestration ecosystem service accounts. A report can also be downloaded as a PDF from the link on its page.",
+    "crumbs": [
+      "Documents"
+    ]
+  },
+  {
+    "objectID": "documentation/index.html#methods-and-results",
+    "href": "documentation/index.html#methods-and-results",
+    "title": "Documents",
+    "section": "Methods and results",
+    "text": "Methods and results\n\nCarbon Sequestration Ecosystem Service Accounts\n\nDescribes how the flow without offset, the actual flow and the missed flow are estimated, valued and mapped for the EU27 in 2000, 2006, 2012, 2018 and 2024, and presents the results.",
+    "crumbs": [
+      "Documents"
+    ]
+  },
+  {
+    "objectID": "downloads/index.html",
+    "href": "downloads/index.html",
+    "title": "Downloads",
+    "section": "",
+    "text": "The workbook below holds the carbon sequestration accounts of the EU27 for 2000, 2006, 2012, 2018 and 2024 by NUTS0, NUTS2 and NUTS3, with one sheet per quantity and level. It covers the flow without the offset in physical terms, and the actual flow and the missed flow in physical and monetary terms. Physical values are in thousand tonnes of CO2 and of carbon, and monetary values are in million euro at current prices and at constant 2010 prices.\nThe 100 m maps are too large for the repository, so they are kept in an external folder. It holds 15 GeoTIFF files in about 8.3 GB, with three maps per year, namely the flow without the offset, the actual flow, and the value of the actual flow at constant 2010 prices. A README.txt file in that folder explains the units and how to read them. The missed flow is reported in tables only, because it is a balance between removals and emissions and has no place of its own on the land.\nThe report explains how each product was built and how to read it.\n\n\n\n\nDownload\nDescription\n\n\n\n\ncarbon_sequestration_results.xlsx\nWorkbook with the flow without offset, the actual flow and the missed flow by NUTS0, NUTS2 and NUTS3\n\n\n100 m maps, 2000 to 2024\nFolder with the 15 GeoTIFF files of the flow without offset, the actual flow and its value at 100 m, opened in Dropbox"
+  }
+]

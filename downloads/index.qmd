@@ -1,0 +1,24 @@
+---
+title: "Downloads"
+---
+
+The workbook below holds the carbon sequestration accounts of the EU27 for 2000, 2006, 2012, 2018 and 2024 by NUTS0, NUTS2 and
+NUTS3, with one sheet per quantity and level. It covers the flow without the offset in physical terms, and the actual flow and
+the missed flow in physical and monetary terms. Physical values are in thousand tonnes of CO2 and of carbon, and monetary values
+are in million euro at current prices and at constant 2010 prices.
+
+The 100 m maps are too large for the repository, so they are kept in an external folder. It holds 15 GeoTIFF files in about
+8.3 GB, with three maps per year, namely the flow without the offset, the actual flow, and the value of the actual flow at
+constant 2010 prices. A `README.txt` file in that folder explains the units and how to read them. The missed flow is reported in
+tables only, because it is a balance between removals and emissions and has no place of its own on the land.
+
+The [report](../documentation/methods/carbon-sequestration/index.qmd) explains how each product was built and how to read it.
+
+::: {.download-table}
+
+| Download | Description |
+|:---|:---|
+| [carbon_sequestration_results.xlsx](../data/outputs/results/carbon_sequestration_results.xlsx){.btn .btn-primary .btn-sm download=""} | Workbook with the flow without offset, the actual flow and the missed flow by NUTS0, NUTS2 and NUTS3 |
+| [100 m maps, 2000 to 2024](https://www.dropbox.com/scl/fo/8miahlh9vyvnn4dp84n1k/AABSIM8QhWBBNZB1UqrUyTk?rlkey=5qmi5bfy76y9zz657pidedfxk&st=jqaj4gfc&dl=0){.btn .btn-primary .btn-sm target="_blank"} | Folder with the 15 GeoTIFF files of the flow without offset, the actual flow and its value at 100 m, opened in Dropbox |
+
+:::
